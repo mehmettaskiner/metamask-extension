@@ -2577,6 +2577,14 @@ export function getMetaMetricsDataDeletionStatus(state) {
   return state.metamask.metaMetricsDataDeletionStatus;
 }
 
+export function isMetaMetricsDataDeletionMarked(state) {
+  return state.appState.metaMetricsDataDeletionMarked;
+}
+
+export function hasRecordedMetricsSinceDeletion(state) {
+  return state.appState.hasRecordedMetricsSinceDeletion;
+}
+
 /**
  * To get all installed snaps with proper metadata
  *
