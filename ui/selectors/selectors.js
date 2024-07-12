@@ -2582,7 +2582,7 @@ export function isMetaMetricsDataDeletionMarked(state) {
 }
 
 export function hasRecordedMetricsSinceDeletion(state) {
-  return state.metamask.hasMetaMetricsDataRecorded;
+  return state.metamask.participateInDuringDeletion;
 }
 
 /**
