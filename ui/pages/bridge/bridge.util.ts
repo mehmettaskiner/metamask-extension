@@ -158,6 +158,17 @@ export async function fetchBridgeQuotes(
   // TODO receive abortSignal from controller and propagate
   request: QuoteRequest,
 ): Promise<QuoteResponse[]> {
-  console.log('=====TODO fetch quotes', request);
-  return [request as unknown as QuoteResponse];
+  const url = `${BRIDGE_API_BASE_URL}/getQuote?${Object.entries(request)
+    .map(([k, v]) => `${k}=${v}`)
+    .join('&')}`;
+  const quotes = await fetchWithCache({
+    url,
+    fetchOptions: { method: 'GET', headers: CLIENT_ID_HEADER },
+    cacheOptions: { cacheRefreshTime: 0 },
+    functionName: 'fetchBridgeQuotes',
+  });
+
+  // TODO use FF for aggregator selection
+  // TODO insufficientBal
+  return quotes;
 }

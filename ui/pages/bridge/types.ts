@@ -24,7 +24,6 @@ export const isValidQuoteRequest = (
   partialRequest: Partial<QuoteRequest>,
 ): partialRequest is QuoteRequest => {
   const STRING_FIELDS = [
-    'walletAddress',
     'srcTokenAddress',
     'srcTokenAmount',
     'destTokenAddress',
