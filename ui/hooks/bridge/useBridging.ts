@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import {
   resetInputFields,
+  resetBridgeState,
   setBridgeFeatureFlags,
   setFromChain,
 } from '../../ducks/bridge/actions';
@@ -67,9 +68,18 @@ const useBridging = () => {
       isBridgeSupported &&
       dispatch(setFromChain(providerConfig.chainId));
 
+    // Reset controller before unloading the page
+    const onBeforeUnload = () => {
+      console.log('===== ON BEFORE UNLOAD TODO');
+      dispatch(resetBridgeState());
+    };
+
+    window.addEventListener('beforeunload', onBeforeUnload);
+
     return () => {
       dispatch(resetBridgeState());
       dispatch(resetInputFields());
+      window.removeEventListener('beforeunload', onBeforeUnload);
     };
   }, []);
 

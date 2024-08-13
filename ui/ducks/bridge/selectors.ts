@@ -110,6 +110,10 @@ export const getToAmount = (_state: BridgeAppState) => {
   return '0';
 };
 
+export const getBridgeQuotes = (state: BridgeAppState) => {
+  return state.metamask.bridgeState.quotes;
+};
+
 export const getIsBridgeTx = createDeepEqualSelector(
   getFromChain,
   getToChain,
