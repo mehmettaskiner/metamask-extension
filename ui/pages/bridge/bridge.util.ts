@@ -23,23 +23,15 @@ import {
   isSwapsDefaultTokenAddress,
   isSwapsDefaultTokenSymbol,
 } from '../../../shared/modules/swaps.utils';
+import {
+  BridgeFlag,
+  FeatureFlagResponse,
+  QuoteRequest,
+  QuoteResponse,
+} from './types';
 
 const CLIENT_ID_HEADER = { 'X-Client-Id': BRIDGE_CLIENT_ID };
 const CACHE_REFRESH_TEN_MINUTES = 10 * MINUTE;
-
-// Types copied from Metabridge API
-enum BridgeFlag {
-  EXTENSION_SUPPORT = 'extension-support',
-  NETWORK_SRC_ALLOWLIST = 'src-network-allowlist',
-  NETWORK_DEST_ALLOWLIST = 'dest-network-allowlist',
-}
-
-export type FeatureFlagResponse = {
-  [BridgeFlag.EXTENSION_SUPPORT]: boolean;
-  [BridgeFlag.NETWORK_SRC_ALLOWLIST]: number[];
-  [BridgeFlag.NETWORK_DEST_ALLOWLIST]: number[];
-};
-// End of copied types
 
 type Validator<ExpectedResponse, DataToValidate> = {
   property: keyof ExpectedResponse | string;
@@ -159,4 +151,13 @@ export async function fetchBridgeTokens(
     }
   });
   return transformedTokens;
+}
+
+// Returns a list of bridge tx quotes
+export async function fetchBridgeQuotes(
+  // TODO receive abortSignal from controller and propagate
+  request: QuoteRequest,
+): Promise<QuoteResponse[]> {
+  console.log('=====TODO fetch quotes', request);
+  return [request as unknown as QuoteResponse];
 }
