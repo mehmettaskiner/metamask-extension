@@ -18,6 +18,7 @@ const {
   setFromToken,
   setToToken,
   setFromTokenInputValue,
+  resetInputFields: resetInputFields_,
   switchToAndFromTokens,
 } = bridgeSlice.actions;
 
@@ -66,5 +67,11 @@ export const setToChain = (chainId: Hex) => {
         chainId,
       ]),
     );
+  };
+};
+
+export const resetInputFields = () => {
+  return async (dispatch: MetaMaskReduxDispatch) => {
+    dispatch(resetInputFields_());
   };
 };
