@@ -43,7 +43,7 @@ export function ConfirmStoryTemplate(
         is caused when the 'ui/pages/confirmations/hooks/syncConfirmPath.ts' hook calls
         history.replace. To avoid history.replace, we can provide a param id. */}
       <MemoryRouter initialEntries={['/confirmation/:0']}>
-        <Route path="/confirmation/:id" render={() => <ConfirmPage />} />
+        <Route path="/confirmation/:id" element={<ConfirmPage />} />
       </MemoryRouter>
     </Provider>
   );

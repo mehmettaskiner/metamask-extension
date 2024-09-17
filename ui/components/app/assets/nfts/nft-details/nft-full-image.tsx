@@ -30,7 +30,10 @@ export default function NftFullImage() {
   const nfts = useSelector(getNfts);
   const nft = nfts.find(
     ({ address, tokenId }: { address: string; tokenId: string }) =>
-      isEqualCaseInsensitive(address, asset) && id === tokenId.toString(),
+      address &&
+      asset &&
+      isEqualCaseInsensitive(address, asset) &&
+      id === tokenId.toString(),
   );
 
   const { image, imageOriginal, name, tokenId } = nft;

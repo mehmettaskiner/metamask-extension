@@ -20,13 +20,16 @@ const Asset = () => {
   const nfts = useSelector(getNfts);
   const { asset, id } = useParams<{ asset: string; id: string }>();
 
-  const token = tokens.find(({ address }: { address: string }) =>
-    isEqualCaseInsensitive(address, asset),
+  const token = tokens.find(
+    ({ address }: { address: string }) =>
+      asset && isEqualCaseInsensitive(address, asset),
   );
 
   const nft = nfts.find(
     ({ address, tokenId }: { address: string; tokenId: string }) =>
-      isEqualCaseInsensitive(address, asset) && id === tokenId.toString(),
+      asset &&
+      isEqualCaseInsensitive(address, asset) &&
+      id === tokenId.toString(),
   );
 
   useEffect(() => {
