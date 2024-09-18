@@ -40,6 +40,7 @@ export enum BridgeUserAction {
   SELECT_SRC_NETWORK = 'selectSrcNetwork',
   SELECT_DEST_NETWORK = 'selectDestNetwork',
   UPDATE_QUOTE_PARAMS = 'updateBridgeQuoteRequestParams',
+  SWITCH_TO_AND_FROM_INPUTS = 'switchToAndFromInputs',
 }
 export enum BridgeBackgroundAction {
   SET_FEATURE_FLAGS = 'setBridgeFeatureFlags',

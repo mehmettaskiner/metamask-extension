@@ -22,10 +22,10 @@ const {
   setToToken: setToToken_,
   setFromTokenInputValue: setFromTokenInputValue_,
   resetInputFields,
-  switchToAndFromTokens,
+  switchToAndFromInputs: switchToAndFromInputs_,
 } = bridgeSlice.actions;
 
-export { resetInputFields, switchToAndFromTokens };
+export { resetInputFields };
 
 // TODO remove this and just write logic out
 const mapToQuoteRequestKey = <T extends string>(
@@ -105,7 +105,7 @@ export const setToToken = (
     dispatch(setToToken_(payload));
     dispatch(
       updateQuoteRequestParams<Pick<QuoteRequest, 'destTokenAddress'>>({
-        destTokenAddress: payload.address ?? '',
+        destTokenAddress: payload.address ?? zeroAddress(),
       }),
     );
   };
@@ -150,3 +150,11 @@ export const setToChain = (chainId: Hex) => {
     );
   };
 };
+
+export const switchToAndFromInputs =
+  (fromChainId: Hex) => async (dispatch: MetaMaskReduxDispatch) => {
+    dispatch(switchToAndFromInputs_(fromChainId));
+    dispatch(
+      callBridgeControllerMethod(BridgeUserAction.SWITCH_TO_AND_FROM_INPUTS),
+    );
+  };
