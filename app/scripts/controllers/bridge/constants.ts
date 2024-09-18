@@ -12,6 +12,10 @@ export enum RequestStatus {
 
 export const DEFAULT_BRIDGE_CONTROLLER_STATE: BridgeControllerState = {
   bridgeFeatureFlags: {
+    [BridgeFeatureFlagsKey.EXTENSION_CONFIG]: {
+      refreshRate: REFRESH_INTERVAL_MS,
+      maxRefreshCount: 5,
+    },
     [BridgeFeatureFlagsKey.EXTENSION_SUPPORT]: false,
     [BridgeFeatureFlagsKey.NETWORK_SRC_ALLOWLIST]: [],
     [BridgeFeatureFlagsKey.NETWORK_DEST_ALLOWLIST]: [],

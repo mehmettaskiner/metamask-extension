@@ -23,6 +23,7 @@ import {
   isSwapsDefaultTokenAddress,
   isSwapsDefaultTokenSymbol,
 } from '../../../shared/modules/swaps.utils';
+import { REFRESH_INTERVAL_MS } from '../../../app/scripts/controllers/bridge/constants';
 import {
   BridgeFlag,
   FeatureFlagResponse,
@@ -60,6 +61,19 @@ export async function fetchBridgeFeatureFlags(): Promise<BridgeFeatureFlags> {
     validateResponse<FeatureFlagResponse, unknown>(
       [
         {
+          property: BridgeFlag.EXTENSION_CONFIG,
+          type: 'object',
+          validator: (
+            v,
+          ): v is Pick<FeatureFlagResponse, BridgeFlag.EXTENSION_CONFIG> =>
+            typeof v === 'object' &&
+            v !== null &&
+            'refreshRate' in v &&
+            typeof v.refreshRate === 'number' &&
+            'maxRefreshCount' in v &&
+            typeof v.maxRefreshCount === 'number',
+        },
+        {
           property: BridgeFlag.EXTENSION_SUPPORT,
           type: 'boolean',
           validator: (v) => typeof v === 'boolean',
@@ -86,6 +100,8 @@ export async function fetchBridgeFeatureFlags(): Promise<BridgeFeatureFlags> {
     )
   ) {
     return {
+      [BridgeFeatureFlagsKey.EXTENSION_CONFIG]:
+        rawFeatureFlags[BridgeFlag.EXTENSION_CONFIG],
       [BridgeFeatureFlagsKey.EXTENSION_SUPPORT]:
         rawFeatureFlags[BridgeFlag.EXTENSION_SUPPORT],
       [BridgeFeatureFlagsKey.NETWORK_SRC_ALLOWLIST]: rawFeatureFlags[
@@ -98,6 +114,10 @@ export async function fetchBridgeFeatureFlags(): Promise<BridgeFeatureFlags> {
   }
 
   return {
+    [BridgeFeatureFlagsKey.EXTENSION_CONFIG]: {
+      refreshRate: REFRESH_INTERVAL_MS,
+      maxRefreshCount: 5,
+    },
     // TODO set default to true once bridging is live
     [BridgeFeatureFlagsKey.EXTENSION_SUPPORT]: false,
     // TODO set default to ALLOWED_BRIDGE_CHAIN_IDS once bridging is live

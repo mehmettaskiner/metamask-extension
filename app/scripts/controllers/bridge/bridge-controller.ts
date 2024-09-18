@@ -19,10 +19,13 @@ import {
 import {
   BRIDGE_CONTROLLER_NAME,
   DEFAULT_BRIDGE_CONTROLLER_STATE,
-  REFRESH_INTERVAL_MS,
   RequestStatus,
 } from './constants';
-import { BridgeControllerState, BridgeControllerMessenger } from './types';
+import {
+  BridgeControllerState,
+  BridgeControllerMessenger,
+  BridgeFeatureFlagsKey,
+} from './types';
 
 const metadata: StateMetadata<{ bridgeState: BridgeControllerState }> = {
   bridgeState: {
@@ -70,8 +73,6 @@ export default class BridgeController extends StaticIntervalPollingController<
     );
 
     // TODO bug: on bridge page reload, request params (bridge state) does not get reset
-    // TODO this.setIntervalLength to refreshRates
-    this.setIntervalLength(REFRESH_INTERVAL_MS);
     // TODO call resetState when tx is submitted (TransactionController)
   }
 
@@ -145,6 +146,9 @@ export default class BridgeController extends StaticIntervalPollingController<
     this.update((_state) => {
       _state.bridgeState = { ...bridgeState, bridgeFeatureFlags };
     });
+    this.setIntervalLength(
+      bridgeFeatureFlags[BridgeFeatureFlagsKey.EXTENSION_CONFIG].refreshRate,
+    );
   };
 
   selectSrcNetwork = async (chainId: Hex) => {
