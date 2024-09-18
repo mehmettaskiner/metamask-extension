@@ -1,5 +1,6 @@
 import { NetworkState, ProviderConfig } from '@metamask/network-controller';
 import { uniqBy } from 'lodash';
+import { createSelector } from 'reselect';
 import {
   getAllNetworks,
   getIsBridgeEnabled,
@@ -13,6 +14,9 @@ import {
 } from '../../../app/scripts/controllers/bridge/types';
 import { createDeepEqualSelector } from '../../selectors/util';
 import { SwapsTokenObject } from '../../../shared/constants/swaps';
+import { calcTokenAmount } from '../../../shared/lib/transactions-controller-utils';
+import { RequestStatus } from '../../../app/scripts/controllers/bridge/constants';
+import { isValidQuoteRequest } from '../../pages/bridge/types';
 import { BridgeState } from './bridge';
 
 type BridgeAppState = {
@@ -103,16 +107,40 @@ export const getToTopAssets = (state: BridgeAppState) => {
   return state.bridge.toChainId ? state.metamask.bridgeState.destTopAssets : [];
 };
 
+export const getBridgeQuotes = (state: BridgeAppState) => {
+  return {
+    quotes: state.metamask.bridgeState.quotes,
+    quotesLastFetchedMs: state.metamask.bridgeState.quotesLastFetched,
+    isLoading:
+      state.metamask.bridgeState.quotesLoadingStatus === RequestStatus.LOADING,
+  };
+};
+
+export const getRecommendedQuote = createSelector(
+  getBridgeQuotes,
+  ({ quotes }) => {
+    // TODO implement sorting
+    return quotes[0];
+  },
+);
+
+export const getQuoteRequest = (state: BridgeAppState) => {
+  const { quoteRequest } = state.metamask.bridgeState;
+  return { isValid: isValidQuoteRequest(quoteRequest), ...quoteRequest };
+};
 export const getFromAmount = (state: BridgeAppState): string | undefined =>
   state.bridge.fromTokenInputValue;
 
-export const getToAmount = (_state: BridgeAppState) => {
-  return '0';
-};
-
-export const getBridgeQuotes = (state: BridgeAppState) => {
-  return state.metamask.bridgeState.quotes;
-};
+export const getToAmount = createSelector(getRecommendedQuote, (quote) =>
+  quote
+    ? calcTokenAmount(
+        quote.quote.destTokenAmount,
+        quote.quote.destAsset.decimals,
+      )
+        .toFixed(3)
+        .toString()
+    : undefined,
+);
 
 export const getIsBridgeTx = createDeepEqualSelector(
   getFromChain,

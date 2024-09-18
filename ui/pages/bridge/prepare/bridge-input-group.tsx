@@ -1,5 +1,4 @@
 import React from 'react';
-import { SwapsTokenObject } from '../../../../shared/constants/swaps';
 import {
   Box,
   Text,
@@ -10,7 +9,6 @@ import { AssetPicker } from '../../../components/multichain/asset-picker-amount/
 import { TabName } from '../../../components/multichain/asset-picker-amount/asset-picker-modal/asset-picker-modal-tabs';
 import CurrencyDisplay from '../../../components/ui/currency-display';
 import { useI18nContext } from '../../../hooks/useI18nContext';
-import { useCurrencyDisplay } from '../../../hooks/useCurrencyDisplay';
 import { useTokenFiatAmount } from '../../../hooks/useTokenFiatAmount';
 import { useEthFiatAmount } from '../../../hooks/useEthFiatAmount';
 import { isSwapsDefaultTokenSymbol } from '../../../../shared/modules/swaps.utils';
@@ -36,7 +34,7 @@ export const BridgeInputGroup = ({
   onAmountChange?: (value: string) => void;
   amountFieldProps?: Pick<
     React.ComponentProps<typeof TextField>,
-    'testId' | 'autoFocus' | 'value' | 'readOnly' | 'disabled'
+    'testId' | 'autoFocus' | 'value' | 'readOnly' | 'disabled' | 'className'
   >;
 } & Pick<
   React.ComponentProps<typeof AssetPicker>,
@@ -78,7 +76,7 @@ export const BridgeInputGroup = ({
           containerClassName="amount-tooltip"
           position="top"
           title={amountFieldProps.value}
-          disabled={amountFieldProps.value?.toString()?.length ?? 0 < 12}
+          disabled={(amountFieldProps.value?.toString()?.length ?? 0) < 12}
           arrow
           hideOnClick={false}
           // explicitly inherit display since Tooltip will default to block
