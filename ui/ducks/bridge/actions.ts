@@ -88,7 +88,6 @@ export const resetInputFields = () => {
 
 export const signBridgeTransaction = (
   history: ReturnType<typeof useHistory>,
-  trackEvent: UITrackEventMethod,
 ) => {
   return async (
     dispatch: MetaMaskReduxDispatch,
