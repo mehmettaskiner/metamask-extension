@@ -2,6 +2,7 @@
 // eslint-disable-next-line import/no-restricted-paths
 import { Hex } from '@metamask/utils';
 import { TransactionType } from '@metamask/transaction-controller';
+import { useHistory } from 'react-router-dom';
 import {
   BridgeBackgroundAction,
   BridgeUserAction,
@@ -15,6 +16,12 @@ import {
 import { submitRequestToBackground } from '../../store/background-connection';
 import { MetaMaskReduxDispatch, MetaMaskReduxState } from '../../store/store';
 import { Numeric } from '../../../shared/modules/Numeric';
+import {
+  MetaMetricsEventCategory,
+  MetaMetricsEventName,
+} from '../../../shared/constants/metametrics';
+import { UITrackEventMethod } from '../../contexts/metametrics';
+import { DEFAULT_ROUTE } from '../../helpers/constants/routes';
 import bridge, { bridgeSlice } from './bridge';
 
 const {
@@ -79,22 +86,26 @@ export const resetInputFields = () => {
     dispatch(resetInputFields_());
 
 
-export const signBridgeTransaction = () => {
+export const signBridgeTransaction = (
+  history: ReturnType<typeof useHistory>,
+  trackEvent: UITrackEventMethod,
+) => {
   return async (
     dispatch: MetaMaskReduxDispatch,
     getState: () => MetaMaskReduxState,
   ) => {
     // const state = getState();
 
-    // Check feature flags to see if enabled
+    // TODO Check feature flags to see if enabled
+    // if (!isLive) {
+    //   history.push(BRIDGE_MAINTENANCE_ROUTE);
+    //   return;
+    // }
 
     // const bestQuote = DUMMY_QUOTES_APPROVAL[0]; // TODO: actually use live quotes
     const bestQuote = DUMMY_QUOTES_NO_APPROVAL[0]; // TODO: actually use live quotes
 
-    // Track event: bridgeStarted TODO
-    // trackEvent({
-
-    // })
+    // Track event TODO
 
     // Approval tx fn
     const handleApprovalTx = async () => {
@@ -151,7 +162,7 @@ export const signBridgeTransaction = () => {
           requireApproval: false,
           // @ts-expect-error Need TransactionController v37+, TODO add this type
           type: 'bridge', // TransactionType.bridge,
-          swaps: {
+          bridge: {
             hasApproveTx: Boolean(bestQuote?.approval),
             meta: {
               // estimatedBaseFee: decEstimatedBaseFee,
@@ -176,12 +187,15 @@ export const signBridgeTransaction = () => {
       return bridgeTxId;
     };
 
-    // Actually execute approval and/or bridge tx
+    // Transaction execution
     let approvalTxId: string | undefined;
     if (bestQuote?.approval) {
       approvalTxId = await handleApprovalTx();
     }
 
-    const bridgeTxId = await handleBridgeTx(approvalTxId);
+    await handleBridgeTx(approvalTxId);
+
+    // Return user to home screen
+    history.push(DEFAULT_ROUTE);
   };
 };
