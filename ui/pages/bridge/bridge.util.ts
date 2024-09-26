@@ -1,4 +1,6 @@
+import { Contract } from '@ethersproject/contracts';
 import { Hex, add0x } from '@metamask/utils';
+import { TransactionParams } from '@metamask/transaction-controller';
 import {
   BridgeFeatureFlagsKey,
   BridgeFeatureFlags,
@@ -8,6 +10,8 @@ import {
 import {
   BRIDGE_API_BASE_URL,
   BRIDGE_CLIENT_ID,
+  ETH_USDT_ADDRESS,
+  METABRIDGE_ETHEREUM_ADDRESS,
 } from '../../../shared/constants/bridge';
 import { MINUTE } from '../../../shared/constants/time';
 import fetchWithCache from '../../../shared/lib/fetch-with-cache';
@@ -25,6 +29,7 @@ import {
   isSwapsDefaultTokenAddress,
   isSwapsDefaultTokenSymbol,
 } from '../../../shared/modules/swaps.utils';
+import { ETHEREUM_USDT_APPROVALS_ABI } from './EthUsdtApprovalsAbi';
 
 const CLIENT_ID_HEADER = { 'X-Client-Id': BRIDGE_CLIENT_ID };
 const CACHE_REFRESH_TEN_MINUTES = 10 * MINUTE;
@@ -162,3 +167,26 @@ export async function fetchBridgeTokens(
   });
   return transformedTokens;
 }
+
+/**
+ * A function to return tx for setting allowance to 0 for USDT on Ethereum
+ * https://www.google.com/url?q=https://docs.unizen.io/trade-api/before-you-get-started/token-allowance-management-for-non-updatable-allowance-tokens&sa=D&source=docs&ust=1727386175513609&usg=AOvVaw3Opm6BSJeu7qO0Ve5iLTOh
+ *
+ * @param approval
+ * @returns
+ */
+export const getEthUsdtRemovalTx = (approval: TransactionParams) => {
+  const USDTContractInterface = new Contract(
+    ETH_USDT_ADDRESS,
+    ETHEREUM_USDT_APPROVALS_ABI,
+  ).interface;
+  const data = USDTContractInterface.encodeFunctionData('approve', [
+    METABRIDGE_ETHEREUM_ADDRESS,
+    '0',
+  ]);
+
+  return {
+    ...approval,
+    data,
+  };
+};
