@@ -29,6 +29,7 @@ import {
   isSwapsDefaultTokenAddress,
   isSwapsDefaultTokenSymbol,
 } from '../../../shared/modules/swaps.utils';
+import { CHAIN_IDS } from '../../../shared/constants/network';
 import { ETHEREUM_USDT_APPROVALS_ABI } from './EthUsdtApprovalsAbi';
 
 const CLIENT_ID_HEADER = { 'X-Client-Id': BRIDGE_CLIENT_ID };
@@ -175,7 +176,7 @@ export async function fetchBridgeTokens(
  * @param approval
  * @returns
  */
-export const getEthUsdtRemovalTx = (approval: TransactionParams) => {
+export const getEthUsdtApproveResetTx = (approval: TransactionParams) => {
   const USDTContractInterface = new Contract(
     ETH_USDT_ADDRESS,
     ETHEREUM_USDT_APPROVALS_ABI,
@@ -190,3 +191,6 @@ export const getEthUsdtRemovalTx = (approval: TransactionParams) => {
     data,
   };
 };
+
+export const isEthUsdt = (chainId: Hex, address: string) =>
+  chainId === CHAIN_IDS.MAINNET && address === ETH_USDT_ADDRESS;
