@@ -22,6 +22,7 @@ import { Numeric } from '../../../shared/modules/Numeric';
 import { DEFAULT_ROUTE } from '../../helpers/constants/routes';
 import {
   checkNetworkAndAccountSupports1559,
+  getIsBridgeChain,
   getIsBridgeEnabled,
   getNetworkConfigurations,
   getSelectedNetworkClientId,
@@ -125,8 +126,9 @@ export const signBridgeTransaction = (
   ) => {
     const state = getState();
     const isBridgeEnabled = getIsBridgeEnabled(state);
+    const isBridgeChain = getIsBridgeChain(state);
 
-    if (!isBridgeEnabled) {
+    if (!(isBridgeEnabled && isBridgeChain)) {
       // TODO do we want to do something here?
       return;
     }
