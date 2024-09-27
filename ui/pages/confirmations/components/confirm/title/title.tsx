@@ -196,21 +196,25 @@ const ConfirmTitle: React.FC = memo(() => {
   return (
     <>
       <ConfirmBannerAlert ownerId={currentConfirmation.id} />
-      <Text
-        variant={TextVariant.headingLg}
-        paddingTop={4}
-        paddingBottom={2}
-        textAlign={TextAlign.Center}
-      >
-        {title}
-      </Text>
-      <Text
-        paddingBottom={4}
-        color={TextColor.textAlternative}
-        textAlign={TextAlign.Center}
-      >
-        {description}
-      </Text>
+      {title !== '' && (
+        <Text
+          variant={TextVariant.headingLg}
+          paddingTop={4}
+          paddingBottom={2}
+          textAlign={TextAlign.Center}
+        >
+          {title}
+        </Text>
+      )}
+      {description !== '' && (
+        <Text
+          paddingBottom={4}
+          color={TextColor.textAlternative}
+          textAlign={TextAlign.Center}
+        >
+          {description}
+        </Text>
+      )}
     </>
   );
 });
