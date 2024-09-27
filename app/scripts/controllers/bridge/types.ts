@@ -33,6 +33,7 @@ export enum BridgeUserAction {
 }
 export enum BridgeBackgroundAction {
   SET_FEATURE_FLAGS = 'setBridgeFeatureFlags',
+  GET_BRIDGE_ERC20_ALLOWANCE = 'getBridgeERC20Allowance',
 }
 
 type BridgeControllerAction<FunctionName extends keyof BridgeController> = {
@@ -43,6 +44,7 @@ type BridgeControllerAction<FunctionName extends keyof BridgeController> = {
 // Maps to BridgeController function names
 type BridgeControllerActions =
   | BridgeControllerAction<BridgeBackgroundAction.SET_FEATURE_FLAGS>
+  | BridgeControllerAction<BridgeBackgroundAction.GET_BRIDGE_ERC20_ALLOWANCE>
   | BridgeControllerAction<BridgeUserAction.SELECT_SRC_NETWORK>
   | BridgeControllerAction<BridgeUserAction.SELECT_DEST_NETWORK>;
 
