@@ -1,5 +1,9 @@
+import { Provider } from '@metamask/network-controller';
 import { BaseController, StateMetadata } from '@metamask/base-controller';
 import { Hex } from '@metamask/utils';
+import { Contract } from '@ethersproject/contracts';
+import { abiERC20 } from '@metamask/metamask-eth-abis';
+import { Web3Provider } from '@ethersproject/providers';
 import {
   fetchBridgeFeatureFlags,
   fetchBridgeTokens,
@@ -12,6 +16,7 @@ import { fetchTopAssetsList } from '../../../../ui/pages/swaps/swaps.util';
 import {
   BRIDGE_CONTROLLER_NAME,
   DEFAULT_BRIDGE_CONTROLLER_STATE,
+  METABRIDGE_CHAIN_TO_ADDRESS_MAP,
 } from './constants';
 import { BridgeControllerState, BridgeControllerMessenger } from './types';
 
@@ -27,7 +32,15 @@ export default class BridgeController extends BaseController<
   { bridgeState: BridgeControllerState },
   BridgeControllerMessenger
 > {
-  constructor({ messenger }: { messenger: BridgeControllerMessenger }) {
+  #provider: Provider;
+
+  constructor({
+    provider,
+    messenger,
+  }: {
+    provider: Provider;
+    messenger: BridgeControllerMessenger;
+  }) {
     super({
       name: BRIDGE_CONTROLLER_NAME,
       metadata,
@@ -35,6 +48,7 @@ export default class BridgeController extends BaseController<
       state: { bridgeState: DEFAULT_BRIDGE_CONTROLLER_STATE },
     });
 
+    // Register action handlers
     this.messagingSystem.registerActionHandler(
       `${BRIDGE_CONTROLLER_NAME}:setBridgeFeatureFlags`,
       this.setBridgeFeatureFlags.bind(this),
@@ -47,6 +61,9 @@ export default class BridgeController extends BaseController<
       `${BRIDGE_CONTROLLER_NAME}:selectDestNetwork`,
       this.selectDestNetwork.bind(this),
     );
+
+    // Assign vars
+    this.#provider = provider;
   }
 
   resetState = () => {
@@ -92,5 +109,18 @@ export default class BridgeController extends BaseController<
     this.update((_state) => {
       _state.bridgeState = { ...bridgeState, [stateKey]: tokens };
     });
+  };
+
+  getErc20Allowance = async (
+    contractAddress: string,
+    walletAddress: string,
+    chainId: Hex,
+  ) => {
+    const web3Provider = new Web3Provider(this.#provider);
+    const contract = new Contract(contractAddress, abiERC20, web3Provider);
+    return await contract.allowance(
+      walletAddress,
+      METABRIDGE_CHAIN_TO_ADDRESS_MAP[chainId],
+    );
   };
 }
