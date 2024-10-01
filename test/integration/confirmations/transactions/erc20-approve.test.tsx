@@ -1,4 +1,5 @@
 import { ApprovalType } from '@metamask/controller-utils';
+import { debug } from 'jest-preview';
 import { act, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -167,7 +168,7 @@ describe('ERC20 Approve Confirmation', () => {
     ).toBeInTheDocument();
   });
 
-  it('displays approve simulation section', async () => {
+  it.only('displays approve simulation section', async () => {
     const mockedMetaMaskState =
       getMetaMaskStateWithUnapprovedApproveTransaction();
 
@@ -178,10 +179,15 @@ describe('ERC20 Approve Confirmation', () => {
       });
     });
 
+    // Inside your tests
+    debug();
+
     const simulationSection = screen.getByTestId(
       'confirmation__simulation_section',
     );
     expect(simulationSection).toBeInTheDocument();
+
+    screen.logTestingPlaygroundURL(simulationSection);
 
     expect(simulationSection).toHaveTextContent(
       "You're giving someone else permission to spend this amount from your account.",
