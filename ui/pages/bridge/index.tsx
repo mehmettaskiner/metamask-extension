@@ -24,12 +24,14 @@ import {
   Footer,
   Header,
 } from '../../components/multichain/pages/page';
+import { useSwapsFeatureFlags } from '../swaps/hooks/useSwapsFeatureFlags';
 import PrepareBridgePage from './prepare/prepare-bridge-page';
 import { BridgeCTAButton } from './prepare/bridge-cta-button';
 
 const CrossChainSwap = () => {
   const t = useContext(I18nContext);
 
+  useSwapsFeatureFlags();
   useBridging();
   useUpdateSwapsState();
 
