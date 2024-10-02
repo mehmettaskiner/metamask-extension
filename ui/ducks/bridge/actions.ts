@@ -15,6 +15,7 @@ import {
   addTransactionAndWaitForPublish,
   forceUpdateMetamaskState,
   addNetwork,
+  setDefaultHomeActiveTabName,
 } from '../../store/actions';
 import { submitRequestToBackground } from '../../store/background-connection';
 import { MetaMaskReduxDispatch, MetaMaskReduxState } from '../../store/store';
@@ -408,7 +409,8 @@ export const signBridgeTransaction = (
         await addDestToken();
       }
 
-      // Return user to home screen
+      // Route user to activity tab on Home page
+      await dispatch(setDefaultHomeActiveTabName('activity'));
       history.push(DEFAULT_ROUTE);
     };
 
