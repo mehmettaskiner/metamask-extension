@@ -47,9 +47,9 @@ async function getPrInfo(): Promise<PRInfo | null> {
  */
 async function fetchWithDepth(depth: number): Promise<boolean> {
   try {
-    await exec(`git fetch --depth ${depth} origin ${MAIN_BRANCH}`);
+    await exec(`git fetch --depth ${depth} origin "${MAIN_BRANCH}"`);
     await exec(
-      `git fetch --depth ${depth} origin ${SOURCE_BRANCH}:${SOURCE_BRANCH}`,
+      `git fetch --depth ${depth} origin "${SOURCE_BRANCH}:${SOURCE_BRANCH}"`,
     );
     return true;
   } catch (error: unknown) {
@@ -87,7 +87,7 @@ async function fetchUntilMergeBaseFound() {
       }
     }
   }
-  await exec(`git fetch --unshallow origin ${MAIN_BRANCH}`);
+  await exec(`git fetch --unshallow origin "${MAIN_BRANCH}"`);
 }
 
 /**
@@ -100,7 +100,7 @@ async function fetchUntilMergeBaseFound() {
 async function gitDiff(): Promise<string> {
   await fetchUntilMergeBaseFound();
   const { stdout: diffResult } = await exec(
-    `git diff --name-only origin/HEAD...${SOURCE_BRANCH}`,
+    `git diff --name-only "origin/HEAD...${SOURCE_BRANCH}"`,
   );
   if (!diffResult) {
     throw new Error('Unable to get diff after full checkout.');
