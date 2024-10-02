@@ -4,6 +4,7 @@ import {
 } from '@metamask/base-controller';
 import { Hex } from '@metamask/utils';
 import { SwapsTokenObject } from '../../../../shared/constants/swaps';
+import { GasMultiplierByChainId } from '../../../../ui/pages/bridge/bridge.util';
 import BridgeController from './bridge-controller';
 import { BRIDGE_CONTROLLER_NAME } from './constants';
 
@@ -11,12 +12,16 @@ export enum BridgeFeatureFlagsKey {
   EXTENSION_SUPPORT = 'extensionSupport',
   NETWORK_SRC_ALLOWLIST = 'srcNetworkAllowlist',
   NETWORK_DEST_ALLOWLIST = 'destNetworkAllowlist',
+  APPROVAL_GAS_MULTIPLIER = 'approvalGasMultiplier',
+  BRIDGE_GAS_MULTIPLIER = 'bridgeGasMultiplier',
 }
 
 export type BridgeFeatureFlags = {
   [BridgeFeatureFlagsKey.EXTENSION_SUPPORT]: boolean;
   [BridgeFeatureFlagsKey.NETWORK_SRC_ALLOWLIST]: Hex[];
   [BridgeFeatureFlagsKey.NETWORK_DEST_ALLOWLIST]: Hex[];
+  [BridgeFeatureFlagsKey.APPROVAL_GAS_MULTIPLIER]: GasMultiplierByChainId;
+  [BridgeFeatureFlagsKey.BRIDGE_GAS_MULTIPLIER]: GasMultiplierByChainId;
 };
 
 export type BridgeControllerState = {

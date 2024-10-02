@@ -36,17 +36,25 @@ import { ETHEREUM_USDT_APPROVALS_ABI } from './EthUsdtApprovalsAbi';
 const CLIENT_ID_HEADER = { 'X-Client-Id': BRIDGE_CLIENT_ID };
 const CACHE_REFRESH_TEN_MINUTES = 10 * MINUTE;
 
+type DecimalChainId = string;
+
 // Types copied from Metabridge API
 enum BridgeFlag {
   EXTENSION_SUPPORT = 'extension-support',
   NETWORK_SRC_ALLOWLIST = 'src-network-allowlist',
   NETWORK_DEST_ALLOWLIST = 'dest-network-allowlist',
+  APPROVAL_GAS_MULTIPLIER = 'approval-gas-multiplier',
+  BRIDGE_GAS_MULTIPLIER = 'bridge-gas-multiplier',
 }
+
+export type GasMultiplierByChainId = Record<DecimalChainId, number>;
 
 export type FeatureFlagResponse = {
   [BridgeFlag.EXTENSION_SUPPORT]: boolean;
   [BridgeFlag.NETWORK_SRC_ALLOWLIST]: number[];
   [BridgeFlag.NETWORK_DEST_ALLOWLIST]: number[];
+  [BridgeFlag.APPROVAL_GAS_MULTIPLIER]: GasMultiplierByChainId;
+  [BridgeFlag.BRIDGE_GAS_MULTIPLIER]: GasMultiplierByChainId;
 };
 // End of copied types
 
@@ -97,6 +105,22 @@ export async function fetchBridgeFeatureFlags(): Promise<BridgeFeatureFlags> {
               (i) => typeof i === 'number',
             ),
         },
+        {
+          property: BridgeFlag.APPROVAL_GAS_MULTIPLIER,
+          type: 'object',
+          validator: (v): v is GasMultiplierByChainId =>
+            Object.values(v as { [s: string]: unknown }).every(
+              (i) => typeof i === 'number',
+            ),
+        },
+        {
+          property: BridgeFlag.BRIDGE_GAS_MULTIPLIER,
+          type: 'object',
+          validator: (v): v is GasMultiplierByChainId =>
+            Object.values(v as { [s: string]: unknown }).every(
+              (i) => typeof i === 'number',
+            ),
+        },
       ],
       rawFeatureFlags,
       url,
@@ -111,6 +135,10 @@ export async function fetchBridgeFeatureFlags(): Promise<BridgeFeatureFlags> {
       [BridgeFeatureFlagsKey.NETWORK_DEST_ALLOWLIST]: rawFeatureFlags[
         BridgeFlag.NETWORK_DEST_ALLOWLIST
       ].map((chainIdDec) => add0x(decimalToHex(chainIdDec))),
+      [BridgeFeatureFlagsKey.APPROVAL_GAS_MULTIPLIER]:
+        rawFeatureFlags[BridgeFlag.APPROVAL_GAS_MULTIPLIER],
+      [BridgeFeatureFlagsKey.BRIDGE_GAS_MULTIPLIER]:
+        rawFeatureFlags[BridgeFlag.BRIDGE_GAS_MULTIPLIER],
     };
   }
 
@@ -121,6 +149,8 @@ export async function fetchBridgeFeatureFlags(): Promise<BridgeFeatureFlags> {
     [BridgeFeatureFlagsKey.NETWORK_SRC_ALLOWLIST]: [],
     // TODO set default to ALLOWED_BRIDGE_CHAIN_IDS once bridging is live
     [BridgeFeatureFlagsKey.NETWORK_DEST_ALLOWLIST]: [],
+    [BridgeFeatureFlagsKey.APPROVAL_GAS_MULTIPLIER]: {},
+    [BridgeFeatureFlagsKey.BRIDGE_GAS_MULTIPLIER]: {},
   };
 }
 
